@@ -2,71 +2,207 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>AXON - نظام إدارة المبيعات</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#1a1a2e; direction:rtl; min-height:100vh; display:flex; align-items:center; justify-content:center; }
-.login-box { background:#fff; padding:40px; border-radius:20px; width:360px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.2); }
-.login-box h1 { color:#f39c12; font-size:2rem; margin-bottom:10px; }
-.login-box p { color:#666; margin-bottom:25px; }
-.login-box input { width:100%; padding:14px; margin:10px 0; border:2px solid #ddd; border-radius:10px; font-size:16px; text-align:center; outline:none; }
-.login-box input:focus { border-color:#f39c12; }
-.login-box button { width:100%; padding:14px; background:#f39c12; color:#fff; border:none; border-radius:10px; font-weight:bold; font-size:16px; cursor:pointer; }
-.login-box button:hover { background:#e67e22; }
-.error-msg { color:#e74c3c; margin-top:15px; font-size:14px; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --primary: #f39c12;
+  --primary-dark: #e67e22;
+  --danger: #e74c3c;
+  --success: #27ae60;
+  --dark: #1a1a2e;
+  --light: #fff;
+  --gray: #f5f5f5;
+  --text: #333;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, var(--dark), #0f0f1a);
+  direction: rtl;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card {
+  background: var(--light);
+  border-radius: 28px;
+  padding: 45px 35px;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.logo-img {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+}
+
+.logo-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 5px 15px rgba(243,156,18,0.3);
+}
+
+.login-card h1 {
+  color: var(--primary);
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+}
+
+.login-card .sub {
+  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 25px;
+}
+
+.login-card input {
+  width: 100%;
+  padding: 14px;
+  margin: 10px 0;
+  border: 2px solid #ddd;
+  border-radius: 12px;
+  font-size: 16px;
+  text-align: center;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.login-card input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(243,156,18,0.2);
+}
+
+.login-card button {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.login-card button:hover {
+  background: var(--primary-dark);
+  transform: scale(1.02);
+}
+
+.error-msg {
+  color: var(--danger);
+  margin-top: 15px;
+  font-size: 14px;
+}
 </style>
 </head>
 <body>
 
-<div class="login-box">
-  <h1>🔷 AXON</h1>
-  <p>نظام إدارة المبيعات</p>
-  <input type="password" id="loginPass" placeholder="كلمة السر" autofocus>
-  <button id="loginBtn">دخول</button>
-  <div id="errorMsg" class="error-msg"></div>
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo-img">
+      <img src="logo-axon.png" alt="AXON Logo" onerror="this.src='https://placehold.co/100x100/f39c12/white?text=AXON'">
+    </div>
+    <h1>AXON</h1>
+    <div class="sub">نظام إدارة المبيعات | الريال السعودي</div>
+    <input type="password" id="loginPass" placeholder="كلمة السر" autofocus>
+    <button id="loginBtn">دخول</button>
+    <div id="errorMsg" class="error-msg"></div>
+  </div>
 </div>
 
 <script>
-// الباسوردات الصحيحة
+// الباسوردات
 const USER_PASS = "1234";
 const ADMIN_PASS = "admin123";
 
-const passInput = document.getElementById('loginPass');
-const loginBtn = document.getElementById('loginBtn');
-const errorDiv = document.getElementById('errorMsg');
-
 // دالة تسجيل الدخول
 function checkLogin() {
+  const passInput = document.getElementById('loginPass');
   const pass = passInput.value.trim();
+  const errorDiv = document.getElementById('errorMsg');
   
   if (pass === ADMIN_PASS) {
     alert("✅ مرحباً أيها الأدمن!");
     errorDiv.innerText = "";
-    // هنا هضيف باقي النظام بعدين
+    // window.location.href = 'dashboard.html';
   } 
   else if (pass === USER_PASS) {
     alert("✅ مرحباً أيها المستخدم!");
     errorDiv.innerText = "";
-    // هنا هضيف باقي النظام بعدين
+    // window.location.href = 'dashboard.html';
   } 
   else {
     errorDiv.innerText = "❌ كلمة سر خاطئة";
     passInput.value = "";
     passInput.focus();
+    
+    // تأثير اهتزاز للخطأ
+    const card = document.querySelector('.login-card');
+    card.style.animation = 'shake 0.3s ease';
+    setTimeout(() => {
+      card.style.animation = 'fadeIn 0.5s ease';
+    }, 300);
   }
 }
 
-// دخول بـ Enter
-passInput.addEventListener('keypress', function(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    checkLogin();
+// تأثير الاهتزاز
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
   }
-});
+`;
+document.head.appendChild(style);
 
-// دخول بضغط الزر
-loginBtn.addEventListener('click', checkLogin);
+// أحداث الدخول
+document.addEventListener('DOMContentLoaded', function() {
+  const passInput = document.getElementById('loginPass');
+  const loginBtn = document.getElementById('loginBtn');
+  
+  // دخول بـ Enter
+  passInput.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      checkLogin();
+    }
+  });
+  
+  // دخول بضغط الزر
+  loginBtn.addEventListener('click', checkLogin);
+  
+  // تركيز تلقائي
+  passInput.focus();
+});
 </script>
 </body>
 </html>
