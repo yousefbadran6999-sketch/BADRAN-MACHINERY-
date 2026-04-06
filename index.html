@@ -29,7 +29,7 @@ body::before {
   right: 0;
   bottom: 0;
   background: url('logo-client.png') center center no-repeat;
-  background-size: 300px;
+  background-size: 350px;
   opacity: 0.08;
   pointer-events: none;
   z-index: 0;
@@ -469,8 +469,14 @@ function logout() {
 }
 
 function renderTabs() {
-  let tabs = ['dashboard', 'products', 'sales', 'invoices', 'returns', 'revenue'];
-  let names = ['📊 الرئيسية', '📦 المنتجات', '🛒 البيع', '📄 الفواتير', '🔄 المرتجعات', '💰 الإيرادات'];
+  let tabs = ['dashboard', 'products', 'sales', 'invoices', 'returns'];
+  let names = ['📊 الرئيسية', '📦 المنتجات', '🛒 البيع', '📄 الفواتير', '🔄 المرتجعات'];
+  
+  if (currentUser === 'admin') {
+    tabs.push('revenue');
+    names.push('💰 الإيرادات');
+  }
+  
   let html = '';
   for (let i = 0; i < tabs.length; i++) {
     html += `<button class="navtab" onclick="switchTab('${tabs[i]}')">${names[i]}</button>`;
@@ -512,16 +518,15 @@ function renderInvoicesTable(invList) {
   invList.forEach((inv, idx) => {
     html += `<tr><td>${idx + 1}</td><td>${inv.customer}</td><td>${inv.date}</td><td>${inv.total.toFixed(2)} ر.س</td></tr>`;
   });
-  html += '</tbody> nahil</div>';
+  html += '</tbody></table></div>';
   return html;
 }
-
+  <script>
 function renderProductsPage() {
   let html = `<div class="section"><div class="section-title">📦 المنتجات</div>
   <div class="form-row"><div class="form-group"><label>🔍 بحث</label><input type="text" id="searchProduct" placeholder="اسم المنتج..."></div></div>
-  <div class="tbl-wrap"> <table><thead><tr><th>#</th><th>المنتج</th><th>سعر البيع</th><th>المخزون</th><th></th></tr></thead><tbody id="productsList"></tbody></table></div>`;
-  if (currentUser === 'admin') html += `<div class="btn-row"><button class="btn btn-primary" onclick="addProduct()">➕ إضافة منتج</button></div>`;
-  html += `</div>`;
+  <div class="tbl-wrap"><table><thead><tr><th>#</th><th>المنتج</th><th>سعر البيع</th><th>المخزون</th><th></th></tr></thead><tbody id="productsList"></tbody></table></div>
+  <div class="btn-row"><button class="btn btn-primary" onclick="addProduct()">➕ إضافة منتج</button></div></div>`;
   document.getElementById('contentArea').innerHTML = html;
   renderProductsList();
   document.getElementById('searchProduct')?.addEventListener('input', () => renderProductsList());
@@ -537,7 +542,10 @@ function renderProductsList() {
       <td>${p.name}</td>
       <td>${p.sellPrice} ر.س</td>
       <td>${p.stock}</td>
-      <td>${currentUser === 'admin' ? `<button class="btn-info btn-sm" onclick="editProduct(${p.id})">✏️</button> <button class="btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑️</button>` : ''}</td>
+      <td>
+        <button class="btn-info btn-sm" onclick="editProduct(${p.id})">✏️</button>
+        ${currentUser === 'admin' ? `<button class="btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑️</button>` : ''}
+      </td>
     </tr>`;
   });
   document.getElementById('productsList').innerHTML = html;
@@ -553,37 +561,45 @@ function addProduct() {
     products.push({ id: Date.now(), name, sellPrice: sell, buyPrice: buy, stock: stock });
     saveProducts();
     renderProductsList();
+    alert("✅ تم إضافة المنتج");
   }
 }
 
 function editProduct(id) {
   let p = products.find(p => p.id === id);
-  let newName = prompt("الاسم:", p.name);
-  let newSell = parseFloat(prompt("سعر البيع (ر.س):", p.sellPrice));
-  let newStock = parseInt(prompt("الكمية:", p.stock));
+  let newName = prompt("الاسم الجديد:", p.name);
+  let newSell = parseFloat(prompt("سعر البيع الجديد (ر.س):", p.sellPrice));
+  let newStock = parseInt(prompt("الكمية الجديدة:", p.stock));
   if (newName) p.name = newName;
   if (!isNaN(newSell)) p.sellPrice = newSell;
   if (!isNaN(newStock)) p.stock = newStock;
   saveProducts();
   renderProductsList();
+  alert("✅ تم تعديل المنتج");
 }
 
 function deleteProduct(id) {
-  if (confirm("حذف المنتج؟")) {
-    products = products.filter(p => p.id !== id);
-    saveProducts();
-    renderProductsList();
-  }
+  if (!confirm("⚠️ هل أنت متأكد من حذف هذا المنتج؟")) return;
+  products = products.filter(p => p.id !== id);
+  saveProducts();
+  renderProductsList();
+  alert("✅ تم حذف المنتج");
 }
 
 let currentInvoice = [];
 
 function renderSalesPage() {
+  let today = new Date().toLocaleDateString('ar-EG');
   let html = `
     <div class="section"><div class="section-title">🛒 فاتورة جديدة</div>
-    <div class="form-row"><div class="form-group"><label>👤 اسم العميل</label><input type="text" id="customerName"></div></div>
-    <div class="form-row"><div class="form-group"><label>🛍️ المنتج</label><select id="productSelect"></select></div>
-    <div class="form-group"><label>سعر مختلف</label><input type="number" id="customPrice" placeholder="اختياري"></div></div>
+    <div class="form-row">
+      <div class="form-group"><label>📅 التاريخ</label><input type="text" id="invoiceDate" value="${today}" readonly style="background:#e9ecef"></div>
+      <div class="form-group"><label>👤 اسم العميل</label><input type="text" id="customerName"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>🛍️ المنتج</label><select id="productSelect"></select></div>
+      <div class="form-group"><label>سعر مختلف</label><input type="number" id="customPrice" placeholder="اختياري"></div>
+    </div>
     <button class="btn btn-primary" onclick="addToInvoice()">➕ أضف</button>
     <div id="invItems"></div>
     <div class="inv-total-box"><div class="lbl">الإجمالي:</div><div class="val" id="invoiceTotal">0</div></div>
@@ -602,23 +618,14 @@ function renderProductSelect() {
 
 function addToInvoice() {
   let pid = document.getElementById('productSelect').value;
-  if (!pid) {
-    alert("اختر منتج");
-    return;
-  }
+  if (!pid) { alert("اختر منتج"); return; }
   let product = products.find(p => p.id == pid);
-  if (product.stock <= 0) {
-    alert("غير متوفر");
-    return;
-  }
+  if (product.stock <= 0) { alert("غير متوفر"); return; }
   let custom = parseFloat(document.getElementById('customPrice').value);
   let price = !isNaN(custom) && custom > 0 ? custom : product.sellPrice;
   let existing = currentInvoice.find(i => i.pid == pid);
   if (existing) {
-    if (existing.qty + 1 > product.stock) {
-      alert("الكمية أكبر من المتوفر");
-      return;
-    }
+    if (existing.qty + 1 > product.stock) { alert("الكمية أكبر من المتوفر"); return; }
     existing.qty++;
     existing.total = existing.qty * existing.price;
   } else {
@@ -631,8 +638,7 @@ function addToInvoice() {
 function renderInvoiceList() {
   let container = document.getElementById('invItems');
   if (!container) return;
-  let html = '',
-    total = 0;
+  let html = '', total = 0;
   currentInvoice.forEach((item, idx) => {
     total += item.total;
     html += `<div class="inv-item-row">
@@ -660,57 +666,37 @@ function changeQty(idx, delta) {
   let item = currentInvoice[idx];
   let product = products.find(p => p.id == item.pid);
   let newQty = item.qty + delta;
-  if (newQty < 1) {
-    removeItem(idx);
-    return;
-  }
-  if (newQty > product.stock) {
-    alert("الكمية أكبر من المتوفر");
-    return;
-  }
+  if (newQty < 1) { removeItem(idx); return; }
+  if (newQty > product.stock) { alert("الكمية أكبر من المتوفر"); return; }
   item.qty = newQty;
   item.total = item.qty * item.price;
   renderInvoiceList();
 }
 
-function removeItem(idx) {
-  currentInvoice.splice(idx, 1);
-  renderInvoiceList();
-}
-
-function clearInvoice() {
-  currentInvoice = [];
-  renderInvoiceList();
-}
+function removeItem(idx) { currentInvoice.splice(idx, 1); renderInvoiceList(); }
+function clearInvoice() { currentInvoice = []; renderInvoiceList(); }
 
 function saveInvoice() {
   let customer = document.getElementById('customerName').value.trim();
-  if (!customer) {
-    alert("أدخل اسم العميل");
-    return;
-  }
-  if (currentInvoice.length === 0) {
-    alert("أضف منتجات");
-    return;
-  }
+  let invoiceDate = document.getElementById('invoiceDate').value;
+  if (!customer) { alert("أدخل اسم العميل"); return; }
+  if (currentInvoice.length === 0) { alert("أضف منتجات"); return; }
   for (let item of currentInvoice) {
     let product = products.find(p => p.id == item.pid);
-    if (product.stock < item.qty) {
-      alert(`الكمية من ${product.name} غير متوفرة`);
-      return;
-    }
+    if (product.stock < item.qty) { alert(`الكمية من ${product.name} غير متوفرة`); return; }
     product.stock -= item.qty;
   }
   let total = currentInvoice.reduce((s, i) => s + i.total, 0);
+  let now = new Date();
+  let dateTime = `${invoiceDate} ${now.toLocaleTimeString('ar-EG')}`;
   invoices.unshift({
     id: Date.now(),
     customer,
-    date: new Date().toLocaleString('ar-EG'),
+    date: dateTime,
     items: JSON.parse(JSON.stringify(currentInvoice)),
     total: total
   });
-  saveProducts();
-  saveInvoices();
+  saveProducts(); saveInvoices();
   clearInvoice();
   document.getElementById('customerName').value = '';
   alert("✅ تم حفظ الفاتورة");
@@ -724,15 +710,17 @@ function renderInvoicesPage() {
     document.getElementById('invoicesList').innerHTML = '<div class="empty-state">لا توجد فواتير</div>';
     return;
   }
-  let invHtml = '<div class="tbl-wrap"> <table><thead><tr><th>#</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th></th></tr></thead><tbody>';
+  let invHtml = '<div class="tbl-wrap"><table><thead><tr><th>#</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th></th></tr></thead><tbody>';
   invoices.forEach((inv, idx) => {
     invHtml += `<tr>
       <td>${idx + 1}</td>
       <td>${inv.customer}</td>
       <td>${inv.date}</td>
       <td>${inv.total.toFixed(2)} ر.س</td>
-      <td><button class="btn-info btn-sm" onclick="alert('${inv.items.map(i => `${i.name} x${i.qty}=${i.total.toFixed(2)}`).join('\\n')}')">📋 عرض</button>
-      ${currentUser === 'admin' ? `<button class="btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">🗑️ حذف</button>` : ''}</td>
+      <td>
+        <button class="btn-info btn-sm" onclick="alert('${inv.items.map(i => `${i.name} x${i.qty}=${i.total.toFixed(2)}`).join('\\n')}')">📋 عرض</button>
+        ${currentUser === 'admin' ? `<button class="btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">🗑️ حذف</button>` : ''}
+      </td>
     </tr>`;
   });
   invHtml += '</tbody></table></div>';
@@ -740,7 +728,7 @@ function renderInvoicesPage() {
 }
 
 function deleteInvoice(id) {
-  if (!confirm("حذف الفاتورة؟")) return;
+  if (!confirm("⚠️ هل أنت متأكد من حذف هذه الفاتورة؟")) return;
   let inv = invoices.find(i => i.id === id);
   if (inv) {
     for (let item of inv.items) {
@@ -748,10 +736,9 @@ function deleteInvoice(id) {
       if (prod) prod.stock += item.qty;
     }
     invoices = invoices.filter(i => i.id !== id);
-    saveProducts();
-    saveInvoices();
-  renderInvoicesPage();
-    alert("✅ تم الحذف");
+    saveProducts(); saveInvoices();
+    renderInvoicesPage();
+    alert("✅ تم حذف الفاتورة");
   }
 }
 
@@ -762,7 +749,7 @@ function renderReturnsPage() {
     document.getElementById('returnsHistory').innerHTML = '<div class="empty-state">لا توجد مرتجعات</div>';
     return;
   }
-  let retHtml = '<div class="tbl-wrap"> <table><thead><tr><th>التاريخ</th><th>المنتجات</th><th>الإجمالي</th></tr></thead><tbody>';
+  let retHtml = '<div class="tbl-wrap"><table><thead><tr><th>التاريخ</th><th>المنتجات</th><th>الإجمالي</th></tr></thead><tbody>';
   returns.forEach(r => {
     retHtml += `<tr>
       <td>${r.date}</td>
@@ -775,9 +762,7 @@ function renderReturnsPage() {
 }
 
 function renderRevenuePage() {
-  let todayTotal = 0,
-    monthTotal = 0,
-    allTotal = 0;
+  let todayTotal = 0, monthTotal = 0, allTotal = 0;
   let now = new Date();
   let monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   invoices.forEach(inv => {
