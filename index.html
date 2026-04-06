@@ -1,124 +1,21 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AXON - دخول</title>
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #1a1a2e, #0f0f1a);
-  direction: rtl;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.login-card {
-  background: white;
-  border-radius: 28px;
-  padding: 45px 35px;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.3);
-}
-.login-card h1 {
-  color: #f39c12;
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-.login-card p {
-  color: #666;
-  margin-bottom: 25px;
-}
-.login-card input {
-  width: 100%;
-  padding: 14px;
-  margin: 10px 0;
-  border: 2px solid #ddd;
-  border-radius: 12px;
-  font-size: 16px;
-  text-align: center;
-  outline: none;
-}
-.login-card input:focus {
-  border-color: #f39c12;
-}
-.login-card button {
-  width: 100%;
-  padding: 14px;
-  background: #f39c12;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-}
-.login-card button:hover {
-  background: #e67e22;
-}
-.error-msg {
-  color: #e74c3c;
-  margin-top: 15px;
-  font-size: 14px;
-}
-</style>
+<title>Test</title>
 </head>
-<body>
-
-<div class="login-card">
-  <h1>🔷 AXON</h1>
-  <p>نظام إدارة المبيعات</p>
-  <input type="password" id="loginPass" placeholder="كلمة السر" autofocus>
-  <button id="loginBtn">دخول</button>
-  <div id="errorMsg" class="error-msg"></div>
-</div>
-
-<script>
-// الباسوردات
-const USER_PASS = "1234";
-const ADMIN_PASS = "admin123";
-
-const passInput = document.getElementById('loginPass');
-const loginBtn = document.getElementById('loginBtn');
-const errorDiv = document.getElementById('errorMsg');
-
-function checkLogin() {
-  const pass = passInput.value.trim();
-  
-  if (pass === ADMIN_PASS) {
-    alert("✅ مرحباً أيها الأدمن!");
-    errorDiv.innerText = "";
-  } 
-  else if (pass === USER_PASS) {
-    alert("✅ مرحباً أيها المستخدم!");
-    errorDiv.innerText = "";
-  } 
-  else {
-    errorDiv.innerText = "❌ كلمة سر خاطئة";
-    passInput.value = "";
-    passInput.focus();
-  }
-}
-
-// دخول بـ Enter
-passInput.addEventListener('keypress', function(event) {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    checkLogin();
-  }
-});
-
-// دخول بضغط الزر
-loginBtn.addEventListener('click', checkLogin);
-</script>
+<body style="text-align:center;margin-top:50px">
+  <input type="password" id="p">
+  <br><br>
+  <button onclick="test()">دخول</button>
+  <script>
+    function test() {
+      let x = document.getElementById('p').value;
+      if (x === '1234') {
+        alert('تم الدخول');
+      } else {
+        alert('خطأ');
+      }
+    }
+  </script>
 </body>
 </html>
