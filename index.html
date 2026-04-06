@@ -6,88 +6,388 @@
 <title>AXON - نظام إدارة المبيعات</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Cairo',sans-serif; background:#f0f2f5; direction:rtl; min-height:100vh; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: #f0f2f5;
+  direction: rtl;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* العلامة المائية (لوجو العميل في الخلفية) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('logo-client.png') center center no-repeat;
+  background-size: 300px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
 
 /* شاشة الدخول */
 .login-screen {
-  position:fixed; inset:0; background:linear-gradient(135deg, #f5f7fa, #e9ecef);
-  display:flex; align-items:center; justify-content:center; z-index:9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f5f7fa, #e9ecef);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
+
 .login-card {
-  background:#fff; border-radius:28px; padding:45px 35px; width:380px;
-  text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.08);
+  background: white;
+  border-radius: 28px;
+  padding: 45px 35px;
+  width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  position: relative;
+  z-index: 1;
 }
-.login-logo { width:100px; height:100px; margin:0 auto 15px; }
-.login-logo img { width:100%; height:100%; object-fit:contain; border-radius:50%; background:#fff; padding:10px; box-shadow:0 5px 15px rgba(243,156,18,0.3); }
-.login-card h1 { font-size:1.6rem; font-weight:900; color:#f39c12; margin-top:10px; }
-.login-card .sub { color:#6c757d; margin-top:5px; font-size:.8rem; }
+
+.login-logo {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 15px;
+}
+
+.login-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  background: white;
+  padding: 10px;
+  box-shadow: 0 5px 15px rgba(243,156,18,0.3);
+}
+
+.login-card h1 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #f39c12;
+  margin-top: 10px;
+}
+
+.login-card .sub {
+  color: #6c757d;
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
 .login-card input {
-  width:100%; padding:14px; margin:15px 0 10px; background:#f8f9fa;
-  border:1px solid #ddd; border-radius:12px; text-align:center; outline:none; font-size:1rem;
+  width: 100%;
+  padding: 14px;
+  margin: 15px 0 10px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  text-align: center;
+  outline: none;
+  font-size: 1rem;
 }
-.login-card input:focus { border-color:#f39c12; }
+
+.login-card input:focus {
+  border-color: #f39c12;
+}
+
 .login-card button {
-  width:100%; padding:14px; background:#f39c12; border:none; border-radius:12px;
-  font-weight:700; cursor:pointer; color:#fff; font-size:1rem; transition:.2s;
+  width: 100%;
+  padding: 14px;
+  background: #f39c12;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+  font-size: 1rem;
+  transition: 0.2s;
 }
-.login-card button:hover { background:#e67e22; }
-.login-err { color:#e74c3c; margin-top:10px; }
+
+.login-card button:hover {
+  background: #e67e22;
+}
+
+.login-err {
+  color: #e74c3c;
+  margin-top: 10px;
+}
 
 /* النظام الداخلي */
-.main-app { display:none; background:#f0f2f5; min-height:100vh; }
+.main-app {
+  display: none;
+  background: transparent;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
 .topbar {
-  background:#fff; border-bottom:1px solid #e0e0e0; padding:12px 24px;
-  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
 }
-.topbar-logo { display:flex; align-items:center; gap:12px; }
-.topbar-logo img { width:45px; height:45px; border-radius:12px; object-fit:cover; }
-.company-name { font-size:1rem; font-weight:900; color:#1a1a2e; }
-.company-sub { font-size:.65rem; color:#6c757d; }
-.user-info { display:flex; align-items:center; gap:15px; }
-.badge-role { padding:4px 12px; border-radius:20px; background:#e9ecef; color:#f39c12; font-weight:600; font-size:.8rem; }
-.btn-logout { background:transparent; border:1px solid #ddd; padding:6px 14px; border-radius:8px; cursor:pointer; }
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-logo img {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.company-name {
+  font-size: 1rem;
+  font-weight: 900;
+  color: #1a1a2e;
+}
+
+.company-sub {
+  font-size: 0.65rem;
+  color: #6c757d;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.badge-role {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #e9ecef;
+  color: #f39c12;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid #ddd;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
 .navtabs {
-  background:#fff; border-bottom:1px solid #e0e0e0; display:flex; gap:4px;
-  padding:8px 24px; overflow-x:auto;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  gap: 4px;
+  padding: 8px 24px;
+  overflow-x: auto;
+  position: relative;
+  z-index: 2;
 }
+
 .navtab {
-  padding:8px 18px; border-radius:8px; cursor:pointer; font-weight:600; color:#6c757d; background:transparent; border:none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #6c757d;
+  background: transparent;
+  border: none;
 }
-.navtab.active { background:#f39c12; color:#fff; }
-.content { padding:24px; }
-.stat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
+
+.navtab.active {
+  background: #f39c12;
+  color: white;
+}
+
+.content {
+  padding: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
 .stat-card {
-  background:#fff; border:1px solid #e0e0e0; border-radius:16px; padding:20px; text-align:center;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
 }
-.stat-card .stat-val { font-size:1.6rem; font-weight:900; margin:6px 0 4px; }
-.stat-card .stat-lbl { color:#6c757d; font-size:.85rem; }
-.section { background:#fff; border:1px solid #e0e0e0; border-radius:16px; padding:20px; margin-bottom:20px; }
-.section-title { font-size:1rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-.form-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-bottom:12px; }
-.form-group { display:flex; flex-direction:column; gap:6px; }
-.form-group label { font-size:.82rem; color:#6c757d; font-weight:600; }
-.form-group input, .form-group select {
-  padding:10px; background:#f8f9fa; border:1px solid #ddd; border-radius:8px; outline:none;
+
+.stat-card .stat-val {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin: 6px 0 4px;
 }
-.btn { padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer; border:none; }
-.btn-primary { background:#f39c12; color:#fff; }
-.btn-success { background:#27ae60; color:#fff; }
-.btn-danger { background:#e74c3c; color:#fff; }
-.btn-info { background:#3498db; color:#fff; }
-.btn-sm { padding:5px 12px; font-size:.8rem; }
-.btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-.tbl-wrap { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; font-size:.88rem; }
-th { background:#f8f9fa; padding:12px; text-align:right; border-bottom:2px solid #ddd; }
-td { padding:12px; border-bottom:1px solid #eee; }
+
+.stat-card .stat-lbl {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.section {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.82rem;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: #f39c12;
+  color: white;
+}
+
+.btn-success {
+  background: #27ae60;
+  color: white;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-info {
+  background: #3498db;
+  color: white;
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 0.8rem;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.tbl-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+th {
+  background: #f8f9fa;
+  padding: 12px;
+  text-align: right;
+  border-bottom: 2px solid #ddd;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
 .inv-item-row {
-  display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:8px;
-  margin-bottom:8px; align-items:center;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
 }
-.inv-total-box { background:#f8f9fa; border-radius:12px; padding:14px 18px; display:flex; justify-content:flex-end; gap:30px; }
-.inv-total-box .val { font-size:1.2rem; font-weight:900; color:#f39c12; }
-.empty-state { text-align:center; padding:50px; color:#6c757d; }
+
+.inv-total-box {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+}
+
+.inv-total-box .val {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #f39c12;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  color: #6c757d;
+}
 </style>
 </head>
 <body>
@@ -110,8 +410,11 @@ td { padding:12px; border-bottom:1px solid #eee; }
 <div id="mainApp" class="main-app">
   <div class="topbar">
     <div class="topbar-logo">
-      <img src="logo-client.png" alt="BADRAN" onerror="this.src='https://placehold.co/45x45/2c3e50/white?text=B'">
-      <div><div class="company-name">BADRAN MACHINERY CO.</div><div class="company-sub">SMART MACHINERY SOLUTIONS</div></div>
+      <img src="logo-client-small.png" alt="BADRAN" onerror="this.src='https://placehold.co/45x45/2c3e50/white?text=B'">
+      <div>
+        <div class="company-name">BADRAN MACHINERY CO.</div>
+        <div class="company-sub">SMART MACHINERY SOLUTIONS</div>
+      </div>
     </div>
     <div class="user-info">
       <span class="badge-role" id="userRoleBadge"></span>
@@ -169,7 +472,7 @@ function renderTabs() {
   let tabs = ['dashboard', 'products', 'sales', 'invoices', 'returns', 'revenue'];
   let names = ['📊 الرئيسية', '📦 المنتجات', '🛒 البيع', '📄 الفواتير', '🔄 المرتجعات', '💰 الإيرادات'];
   let html = '';
-  for(let i=0;i<tabs.length;i++) {
+  for (let i = 0; i < tabs.length; i++) {
     html += `<button class="navtab" onclick="switchTab('${tabs[i]}')">${names[i]}</button>`;
   }
   document.getElementById('navTabs').innerHTML = html;
@@ -179,92 +482,102 @@ function renderTabs() {
 function switchTab(tabId) {
   document.querySelectorAll('.navtab').forEach(btn => btn.classList.remove('active'));
   event.target.classList.add('active');
-  if(tabId === 'dashboard') renderDashboard();
-  else if(tabId === 'products') renderProductsPage();
-  else if(tabId === 'sales') renderSalesPage();
-  else if(tabId === 'invoices') renderInvoicesPage();
-  else if(tabId === 'returns') renderReturnsPage();
-  else if(tabId === 'revenue') renderRevenuePage();
+  if (tabId === 'dashboard') renderDashboard();
+  else if (tabId === 'products') renderProductsPage();
+  else if (tabId === 'sales') renderSalesPage();
+  else if (tabId === 'invoices') renderInvoicesPage();
+  else if (tabId === 'returns') renderReturnsPage();
+  else if (tabId === 'revenue') renderRevenuePage();
 }
 
 function renderDashboard() {
-  let totalSales = invoices.reduce((s,i)=>s+i.total,0);
-  let totalReturns = returns.reduce((s,r)=>s+r.total,0);
+  let totalSales = invoices.reduce((s, i) => s + i.total, 0);
+  let totalReturns = returns.reduce((s, r) => s + r.total, 0);
   let html = `
     <div class="stat-grid">
       <div class="stat-card"><div class="stat-lbl">المنتجات</div><div class="stat-val">${products.length}</div></div>
-      <div class="stat-card"><div class="stat-lbl">المخزون</div><div class="stat-val">${products.reduce((s,p)=>s+p.stock,0)}</div></div>
+      <div class="stat-card"><div class="stat-lbl">المخزون</div><div class="stat-val">${products.reduce((s, p) => s + p.stock, 0)}</div></div>
       <div class="stat-card"><div class="stat-lbl">المبيعات</div><div class="stat-val">${totalSales.toFixed(2)} ر.س</div></div>
       <div class="stat-card"><div class="stat-lbl">المرتجعات</div><div class="stat-val">${totalReturns.toFixed(2)} ر.س</div></div>
-      <div class="stat-card"><div class="stat-lbl">صافي الإيرادات</div><div class="stat-val">${(totalSales-totalReturns).toFixed(2)} ر.س</div></div>
+      <div class="stat-card"><div class="stat-lbl">صافي الإيرادات</div><div class="stat-val">${(totalSales - totalReturns).toFixed(2)} ر.س</div></div>
     </div>
-    <div class="section"><div class="section-title">📋 آخر الفواتير</div>${renderInvoicesTable(invoices.slice(0,5))}</div>
+    <div class="section"><div class="section-title">📋 آخر الفواتير</div>${renderInvoicesTable(invoices.slice(0, 5))}</div>
   `;
   document.getElementById('contentArea').innerHTML = html;
 }
 
 function renderInvoicesTable(invList) {
-  if(!invList.length) return '<div class="empty-state">لا توجد فواتير</div>';
-  let html = '<div class="tbl-wrap"></table><thead><tr><th>#</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th></tr></thead><tbody>';
-  invList.forEach((inv,idx)=>{
-    html += `<tr><td>${idx+1}</td><td>${inv.customer}<\/td><td>${inv.date}<\/td><td>${inv.total.toFixed(2)} ر.س<\/td><\/tr>`;
+  if (!invList.length) return '<div class="empty-state">لا توجد فواتير</div>';
+  let html = '<div class="tbl-wrap"><table><thead><tr><th>#</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th></tr></thead><tbody>';
+  invList.forEach((inv, idx) => {
+    html += `<tr><td>${idx + 1}</td><td>${inv.customer}</td><td>${inv.date}</td><td>${inv.total.toFixed(2)} ر.س</td></tr>`;
   });
-  html += '</tbody></table></div>';
+  html += '</tbody> nahil</div>';
   return html;
 }
 
 function renderProductsPage() {
   let html = `<div class="section"><div class="section-title">📦 المنتجات</div>
   <div class="form-row"><div class="form-group"><label>🔍 بحث</label><input type="text" id="searchProduct" placeholder="اسم المنتج..."></div></div>
-  <div class="tbl-wrap"><table><thead><tr><th>#</th><th>المنتج</th><th>سعر البيع</th><th>المخزون</th><th></th></tr></thead><tbody id="productsList"></tbody></table></div>`;
-  if(currentUser==='admin') html += `<div class="btn-row"><button class="btn btn-primary" onclick="addProduct()">➕ إضافة منتج</button></div>`;
+  <div class="tbl-wrap"> <table><thead><tr><th>#</th><th>المنتج</th><th>سعر البيع</th><th>المخزون</th><th></th></tr></thead><tbody id="productsList"></tbody></table></div>`;
+  if (currentUser === 'admin') html += `<div class="btn-row"><button class="btn btn-primary" onclick="addProduct()">➕ إضافة منتج</button></div>`;
   html += `</div>`;
   document.getElementById('contentArea').innerHTML = html;
   renderProductsList();
-  document.getElementById('searchProduct')?.addEventListener('input',()=>renderProductsList());
+  document.getElementById('searchProduct')?.addEventListener('input', () => renderProductsList());
 }
 
 function renderProductsList() {
-  let search = document.getElementById('searchProduct')?.value.toLowerCase()||'';
-  let filtered = products.filter(p=>p.name.toLowerCase().includes(search));
+  let search = document.getElementById('searchProduct')?.value.toLowerCase() || '';
+  let filtered = products.filter(p => p.name.toLowerCase().includes(search));
   let html = '';
-  filtered.forEach((p,i)=>{
-    html += `<tr><td>${i+1}<\/td><td>${p.name}<\/td><td>${p.sellPrice} ر.س<\/td><td>${p.stock}<\/td><td>`;
-    if(currentUser==='admin') html += `<button class="btn-info btn-sm" onclick="editProduct(${p.id})">✏️</button> <button class="btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑️</button>`;
-    html += `<\/td><\/tr>`;
+  filtered.forEach((p, i) => {
+    html += `<tr>
+      <td>${i + 1}</td>
+      <td>${p.name}</td>
+      <td>${p.sellPrice} ر.س</td>
+      <td>${p.stock}</td>
+      <td>${currentUser === 'admin' ? `<button class="btn-info btn-sm" onclick="editProduct(${p.id})">✏️</button> <button class="btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑️</button>` : ''}</td>
+    </tr>`;
   });
   document.getElementById('productsList').innerHTML = html;
 }
 
 function addProduct() {
   let name = prompt("اسم المنتج:");
-  if(!name) return;
+  if (!name) return;
   let sell = parseFloat(prompt("سعر البيع (ر.س):"));
   let buy = parseFloat(prompt("سعر الشراء (ر.س):"));
-  let stock = parseInt(prompt("الكمية:",10));
-  if(!isNaN(sell) && !isNaN(buy)) {
-    products.push({id:Date.now(), name, sellPrice:sell, buyPrice:buy, stock:stock});
-    saveProducts(); renderProductsList();
+  let stock = parseInt(prompt("الكمية:", 10));
+  if (!isNaN(sell) && !isNaN(buy)) {
+    products.push({ id: Date.now(), name, sellPrice: sell, buyPrice: buy, stock: stock });
+    saveProducts();
+    renderProductsList();
   }
 }
+
 function editProduct(id) {
-  let p = products.find(p=>p.id===id);
+  let p = products.find(p => p.id === id);
   let newName = prompt("الاسم:", p.name);
   let newSell = parseFloat(prompt("سعر البيع (ر.س):", p.sellPrice));
   let newStock = parseInt(prompt("الكمية:", p.stock));
-  if(newName) p.name = newName;
-  if(!isNaN(newSell)) p.sellPrice = newSell;
-  if(!isNaN(newStock)) p.stock = newStock;
-  saveProducts(); renderProductsList();
+  if (newName) p.name = newName;
+  if (!isNaN(newSell)) p.sellPrice = newSell;
+  if (!isNaN(newStock)) p.stock = newStock;
+  saveProducts();
+  renderProductsList();
 }
+
 function deleteProduct(id) {
-  if(confirm("حذف المنتج؟")) {
-    products = products.filter(p=>p.id!==id);
-    saveProducts(); renderProductsList();
+  if (confirm("حذف المنتج؟")) {
+    products = products.filter(p => p.id !== id);
+    saveProducts();
+    renderProductsList();
   }
 }
 
 let currentInvoice = [];
+
 function renderSalesPage() {
   let html = `
     <div class="section"><div class="section-title">🛒 فاتورة جديدة</div>
@@ -283,23 +596,33 @@ function renderSalesPage() {
 
 function renderProductSelect() {
   let sel = document.getElementById('productSelect');
-  if(!sel) return;
-  sel.innerHTML = '<option value="">-- اختر منتج --</option>' + products.map(p=>`<option value="${p.id}">${p.name} - ${p.sellPrice} ر.س (${p.stock})</option>`).join('');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">-- اختر منتج --</option>' + products.map(p => `<option value="${p.id}">${p.name} - ${p.sellPrice} ر.س (${p.stock})</option>`).join('');
 }
 
 function addToInvoice() {
   let pid = document.getElementById('productSelect').value;
-  if(!pid) { alert("اختر منتج"); return; }
-  let product = products.find(p=>p.id==pid);
-  if(product.stock<=0) { alert("غير متوفر"); return; }
+  if (!pid) {
+    alert("اختر منتج");
+    return;
+  }
+  let product = products.find(p => p.id == pid);
+  if (product.stock <= 0) {
+    alert("غير متوفر");
+    return;
+  }
   let custom = parseFloat(document.getElementById('customPrice').value);
-  let price = !isNaN(custom) && custom>0 ? custom : product.sellPrice;
-  let existing = currentInvoice.find(i=>i.pid==pid);
-  if(existing) {
-    if(existing.qty+1 > product.stock) { alert("الكمية أكبر من المتوفر"); return; }
-    existing.qty++; existing.total = existing.qty * existing.price;
+  let price = !isNaN(custom) && custom > 0 ? custom : product.sellPrice;
+  let existing = currentInvoice.find(i => i.pid == pid);
+  if (existing) {
+    if (existing.qty + 1 > product.stock) {
+      alert("الكمية أكبر من المتوفر");
+      return;
+    }
+    existing.qty++;
+    existing.total = existing.qty * existing.price;
   } else {
-    currentInvoice.push({pid:pid, name:product.name, price:price, qty:1, total:price});
+    currentInvoice.push({ pid: pid, name: product.name, price: price, qty: 1, total: price });
   }
   renderInvoiceList();
   document.getElementById('customPrice').value = '';
@@ -307,9 +630,10 @@ function addToInvoice() {
 
 function renderInvoiceList() {
   let container = document.getElementById('invItems');
-  if(!container) return;
-  let html = '', total = 0;
-  currentInvoice.forEach((item,idx)=>{
+  if (!container) return;
+  let html = '',
+    total = 0;
+  currentInvoice.forEach((item, idx) => {
     total += item.total;
     html += `<div class="inv-item-row">
       <div>${item.name}</div>
@@ -325,37 +649,68 @@ function renderInvoiceList() {
 
 function updatePrice(idx, newPrice) {
   let price = parseFloat(newPrice);
-  if(!isNaN(price) && price>0) {
+  if (!isNaN(price) && price > 0) {
     currentInvoice[idx].price = price;
     currentInvoice[idx].total = currentInvoice[idx].qty * price;
     renderInvoiceList();
   }
 }
+
 function changeQty(idx, delta) {
   let item = currentInvoice[idx];
-  let product = products.find(p=>p.id==item.pid);
+  let product = products.find(p => p.id == item.pid);
   let newQty = item.qty + delta;
-  if(newQty<1) { removeItem(idx); return; }
-  if(newQty > product.stock) { alert("الكمية أكبر من المتوفر"); return; }
+  if (newQty < 1) {
+    removeItem(idx);
+    return;
+  }
+  if (newQty > product.stock) {
+    alert("الكمية أكبر من المتوفر");
+    return;
+  }
   item.qty = newQty;
   item.total = item.qty * item.price;
   renderInvoiceList();
 }
-function removeItem(idx) { currentInvoice.splice(idx,1); renderInvoiceList(); }
-function clearInvoice() { currentInvoice = []; renderInvoiceList(); }
+
+function removeItem(idx) {
+  currentInvoice.splice(idx, 1);
+  renderInvoiceList();
+}
+
+function clearInvoice() {
+  currentInvoice = [];
+  renderInvoiceList();
+}
 
 function saveInvoice() {
   let customer = document.getElementById('customerName').value.trim();
-  if(!customer) { alert("أدخل اسم العميل"); return; }
-  if(currentInvoice.length===0) { alert("أضف منتجات"); return; }
-  for(let item of currentInvoice) {
-    let product = products.find(p=>p.id==item.pid);
-    if(product.stock < item.qty) { alert(`الكمية من ${product.name} غير متوفرة`); return; }
+  if (!customer) {
+    alert("أدخل اسم العميل");
+    return;
+  }
+  if (currentInvoice.length === 0) {
+    alert("أضف منتجات");
+    return;
+  }
+  for (let item of currentInvoice) {
+    let product = products.find(p => p.id == item.pid);
+    if (product.stock < item.qty) {
+      alert(`الكمية من ${product.name} غير متوفرة`);
+      return;
+    }
     product.stock -= item.qty;
   }
-  let total = currentInvoice.reduce((s,i)=>s+i.total,0);
-  invoices.unshift({id:Date.now(), customer, date:new Date().toLocaleString('ar-EG'), items:JSON.parse(JSON.stringify(currentInvoice)), total});
-  saveProducts(); saveInvoices();
+  let total = currentInvoice.reduce((s, i) => s + i.total, 0);
+  invoices.unshift({
+    id: Date.now(),
+    customer,
+    date: new Date().toLocaleString('ar-EG'),
+    items: JSON.parse(JSON.stringify(currentInvoice)),
+    total: total
+  });
+  saveProducts();
+  saveInvoices();
   clearInvoice();
   document.getElementById('customerName').value = '';
   alert("✅ تم حفظ الفاتورة");
@@ -365,28 +720,37 @@ function saveInvoice() {
 function renderInvoicesPage() {
   let html = `<div class="section"><div class="section-title">📄 الفواتير</div><div id="invoicesList"></div></div>`;
   document.getElementById('contentArea').innerHTML = html;
-  if(invoices.length===0) { document.getElementById('invoicesList').innerHTML = '<div class="empty-state">لا توجد فواتير</div>'; return; }
-  let invHtml = '<div class="tbl-wrap"><table><thead><tr><th>#</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th></th></tr></thead><tbody>';
-  invoices.forEach((inv,idx)=>{
-    invHtml += `<tr><td>${idx+1}<\/td><td>${inv.customer}<\/td><td>${inv.date}<\/td><td>${inv.total.toFixed(2)} ر.س<\/td>
-    <td><button class="btn-info btn-sm" onclick="alert('${inv.items.map(i=>`${i.name} x${i.qty}=${i.total.toFixed(2)}`).join('\\n')}')">📋 عرض</button>
-    ${currentUser==='admin'?`<button class="btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">🗑️ حذف</button>`:''}<\/td><\/tr>`;
+  if (invoices.length === 0) {
+    document.getElementById('invoicesList').innerHTML = '<div class="empty-state">لا توجد فواتير</div>';
+    return;
+  }
+  let invHtml = '<div class="tbl-wrap"> <table><thead><tr><th>#</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th></th></tr></thead><tbody>';
+  invoices.forEach((inv, idx) => {
+    invHtml += `<tr>
+      <td>${idx + 1}</td>
+      <td>${inv.customer}</td>
+      <td>${inv.date}</td>
+      <td>${inv.total.toFixed(2)} ر.س</td>
+      <td><button class="btn-info btn-sm" onclick="alert('${inv.items.map(i => `${i.name} x${i.qty}=${i.total.toFixed(2)}`).join('\\n')}')">📋 عرض</button>
+      ${currentUser === 'admin' ? `<button class="btn-danger btn-sm" onclick="deleteInvoice(${inv.id})">🗑️ حذف</button>` : ''}</td>
+    </tr>`;
   });
   invHtml += '</tbody></table></div>';
   document.getElementById('invoicesList').innerHTML = invHtml;
 }
 
 function deleteInvoice(id) {
-  if(!confirm("حذف الفاتورة؟")) return;
-  let inv = invoices.find(i=>i.id===id);
-  if(inv) {
-    for(let item of inv.items) {
-      let prod = products.find(p=>p.name===item.name);
-      if(prod) prod.stock += item.qty;
+  if (!confirm("حذف الفاتورة؟")) return;
+  let inv = invoices.find(i => i.id === id);
+  if (inv) {
+    for (let item of inv.items) {
+      let prod = products.find(p => p.name === item.name);
+      if (prod) prod.stock += item.qty;
     }
-    invoices = invoices.filter(i=>i.id!==id);
-    saveProducts(); saveInvoices();
-    renderInvoicesPage();
+    invoices = invoices.filter(i => i.id !== id);
+    saveProducts();
+    saveInvoices();
+  renderInvoicesPage();
     alert("✅ تم الحذف");
   }
 }
@@ -394,23 +758,33 @@ function deleteInvoice(id) {
 function renderReturnsPage() {
   let html = `<div class="section"><div class="section-title">🔄 المرتجعات</div><div id="returnsHistory"></div></div>`;
   document.getElementById('contentArea').innerHTML = html;
-  if(returns.length===0) { document.getElementById('returnsHistory').innerHTML = '<div class="empty-state">لا توجد مرتجعات</div>'; return; }
-  let retHtml = '<div class="tbl-wrap"><table><thead><tr><th>التاريخ</th><th>المنتجات</th><th>الإجمالي</th></tr></thead><tbody>';
-  returns.forEach(r=>{
-    retHtml += `<tr><td>${r.date}<\/td><td>${r.items.map(i=>`${i.name} x${i.qty}`).join(', ')}<\/td><td>${r.total.toFixed(2)} ر.س<\/td><\/tr>`;
+  if (returns.length === 0) {
+    document.getElementById('returnsHistory').innerHTML = '<div class="empty-state">لا توجد مرتجعات</div>';
+    return;
+  }
+  let retHtml = '<div class="tbl-wrap"> <table><thead><tr><th>التاريخ</th><th>المنتجات</th><th>الإجمالي</th></tr></thead><tbody>';
+  returns.forEach(r => {
+    retHtml += `<tr>
+      <td>${r.date}</td>
+      <td>${r.items.map(i => `${i.name} x${i.qty}`).join(', ')}</td>
+      <td>${r.total.toFixed(2)} ر.س</td>
+    </tr>`;
   });
   retHtml += '</tbody></table></div>';
   document.getElementById('returnsHistory').innerHTML = retHtml;
 }
+
 function renderRevenuePage() {
-  let todayTotal = 0, monthTotal = 0, allTotal = 0;
+  let todayTotal = 0,
+    monthTotal = 0,
+    allTotal = 0;
   let now = new Date();
   let monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  invoices.forEach(inv=>{
+  invoices.forEach(inv => {
     let invDate = inv.date.split(' ')[0];
     allTotal += inv.total;
-    if(invDate === new Date().toISOString().split('T')[0]) todayTotal += inv.total;
-    if(new Date(invDate) >= monthStart) monthTotal += inv.total;
+    if (invDate === new Date().toISOString().split('T')[0]) todayTotal += inv.total;
+    if (new Date(invDate) >= monthStart) monthTotal += inv.total;
   });
   let html = `
     <div class="stat-grid">
@@ -425,18 +799,3 @@ function renderRevenuePage() {
 </script>
 </body>
 </html>
-function renderRevenuePage() {
-  let todayTotal = 0, monthTotal = 0, allTotal = 0;
-  let now = new Date();
-  let monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  invoices.forEach(inv=>{
-    let invDate = inv.date.split(' ')[0];
-    allTotal += inv.total;
-    if(invDate === new Date().toISOString().split('T')[0]) todayTotal += inv.total;
-    if(new Date(invDate) >= monthStart) monthTotal += inv.total;
-  });
-  let html = `
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-lbl">اليوم</div><div class="stat-val">${todayTotal.toFixed(2)} ر.س</div></div>
-      <div class="stat-card"><div class="stat-lbl">هذا الشهر</div><div class="stat-val">${monthTotal.toFixed(2)} ر.س</div></div>
-      <div class="stat-card"><div class="stat-lbl">الإجما
